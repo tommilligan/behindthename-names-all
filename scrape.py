@@ -19,12 +19,31 @@ root_logger.handlers = [ch]
 _log = logging.getLogger(__name__)
 _log.setLevel(logging.INFO)
 
+def get_and_assert_ok(url: str):
+    r = requests.get(url)
+    assert r.status_code == 200
+    return r
+
+
 
 @attr.s(auto_attribs=True, frozen=True, slots=True)
 class Name:
     description: str
     text: str
     usage: str
+
+    @staticmethod
+    def from_listing(soup) -> "Name":
+        usage=soup.contents[1].text,
+        text=soup.contents[0].text,
+
+        soup.contents = soup.contents[2:]
+        description = soup.text
+        return Name(
+            description=description,
+            usage=usage[0],
+            text=text[0],
+        )
 
 
 @attr.s(auto_attribs=True, frozen=True, slots=True)
@@ -46,32 +65,14 @@ class BehindTheNamesSite:
                 results_from_page = results_from_page + 1
                 yield name
 
+            _log.info("Scraped {} names".format(results_from_page))
             if results_from_page == 0:
                 break
 
 
-def get_and_assert_ok(url: str):
-    r = requests.get(url)
-    assert r.status_code == 200
-    return r
-
-
-def listing_to_name(soup) -> Name:
-    usage=soup.contents[1].text,
-    text=soup.contents[0].text,
-
-    soup.contents = soup.contents[2:]
-    description = soup.text
-    return Name(
-        description=description,
-        usage=usage[0],
-        text=text[0],
-    )
-
-
 def scrape_names_results(text: str) -> Iterable[Name]:
     soup = BeautifulSoup(text, "html.parser", parse_only=SoupStrainer("div", class_="browsename"))
-    return map(listing_to_name, soup)
+    return map(Name.from_listing, soup)
 
 
 def scrape():
