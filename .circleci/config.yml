@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+    steps:
+      - checkout
+      - run:
+          command: |
+            sudo pip install pipenv
+            pipenv install
+      - run:
+        command: |
+          pipenv run "python test_scrape.py"

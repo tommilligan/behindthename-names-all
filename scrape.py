@@ -23,11 +23,9 @@ BASE_URLS = {
 }
 
 root_logger = logging.getLogger()
-root_logger.setLevel(logging.INFO)
 ch = logging.StreamHandler(sys.stderr)
 root_logger.handlers = [ch]
 _log = logging.getLogger(__name__)
-_log.setLevel(logging.INFO)
 
 
 def get_and_assert_ok(url: str):
@@ -113,6 +111,8 @@ def main_parser():
 def main():
     parser = main_parser()
     args = parser.parse_args()
+    root_logger.setLevel(logging.INFO)
+    _log.setLevel(logging.INFO)
     return scrape(BASE_URLS[NameKind(args.kind)])
 
 
