@@ -13,4 +13,4 @@ jobs:
             pipenv install
       - run:
           command: |
-            pipenv run "python test_scrape.py"
+            pipenv run python test_scrape.py
