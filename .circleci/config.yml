@@ -12,5 +12,5 @@ jobs:
             sudo pip install pipenv
             pipenv install
       - run:
-        command: |
-          pipenv run "python test_scrape.py"
+          command: |
+            pipenv run "python test_scrape.py"
